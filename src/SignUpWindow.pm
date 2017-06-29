@@ -167,8 +167,8 @@ sub SignUpWindow
 
     $main -> Label
     (
-        -text => '*Password should be between 8-13 characters.
-            It should contain at least one alphabet and one numeric digit.',
+        -text => '*Password should be between 8-13 characters. It should ' .
+                    'contain at least one alphabet and one numeric digit.',
         -foreground => 'white',
         -background => 'DarkSlateGray',
         -font => 'Georgia 10 normal',
@@ -193,31 +193,28 @@ sub SignUpWindow
     (
         -text => 'SignUp',
         -font => 'Roman 14 bold',
-        -command => sub
-                    {
-                        if($password eq $cpassword && $password =~
-                        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,13}$/ &&
-                        $mobile =~ /^\d{10}$/)
-                        {
-                            $CustomerRegistrationSuccess::CustRegDone ->
-                            deiconify();
-                            $CustomerRegistrationSuccess::CustRegDone ->
-                            raise();
-                            my $sth = $dbh -> prepare("insert into Registration
+        -command =>
+            sub
+            {
+                if($password eq $cpassword && $password =~
+                    /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,13}$/ &&
+                    $mobile =~ /^\d{10}$/)
+                {
+                    $CustomerRegistrationSuccess::CustRegDone -> deiconify();
+                    $CustomerRegistrationSuccess::CustRegDone -> raise();
+
+                    my $sth = $dbh -> prepare("insert into Registration
                                             values(?, ?, ?, ?, ?, ?, ?, ?)");
-                            $sth -> execute($firstname, $lastname, $gender,
-                            $age, $email, $password, $cpassword, $mobile)
-                            or die;
-                            $sth -> finish();
-                        }
-                        else
-                        {
-                            $CustomerRegistrationFailure::CustRegNotDone ->
-                            deiconify();
-                            $CustomerRegistrationFailure::CustRegNotDone ->
-                            raise();
-                        }
-                    },
+                    $sth -> execute($firstname, $lastname, $gender, $age,
+                                $email, $password, $cpassword, $mobile) or die;
+                    $sth -> finish();
+                }
+                else
+                {
+                    $CustomerRegistrationFailure::CustRegNotDone -> deiconify();
+                    $CustomerRegistrationFailure::CustRegNotDone -> raise();
+                }
+            },
         -background => 'goldenrod2'
     ) -> pack(-side => 'left', -padx => 5, -pady => 10);
 
@@ -225,12 +222,13 @@ sub SignUpWindow
     (
         -text => 'I already have an account',
         -font => 'Roman 14 bold',
-        -command => sub
-                    {
-                        $CustomerLoginWindow::customer -> deiconify();
-                        $CustomerLoginWindow::customer -> raise();
-                        $CustomerLoginWindow::customer -> update();
-                    },
+        -command =>
+            sub
+            {
+                $CustomerLoginWindow::customer -> deiconify();
+                $CustomerLoginWindow::customer -> raise();
+                $CustomerLoginWindow::customer -> update();
+            },
         -background => 'DeepSkyBlue'
     ) -> pack(-side => 'left', -padx => 5, -pady => 10);
 
@@ -238,12 +236,13 @@ sub SignUpWindow
     (
         -text => 'Staff Member Login',
         -font => 'Roman 14 bold',
-        -command => sub
-                    {
-                        $StaffLoginWindow::staff -> deiconify();
-                        $StaffLoginWindow::staff -> raise();
-                        $StaffLoginWindow::staff -> update();
-                    },
+        -command =>
+            sub
+            {
+                $StaffLoginWindow::staff -> deiconify();
+                $StaffLoginWindow::staff -> raise();
+                $StaffLoginWindow::staff -> update();
+            },
         -background => 'goldenrod2'
     ) -> pack(-side => 'left', -pady => 10);
 
