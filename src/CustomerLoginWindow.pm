@@ -65,35 +65,36 @@ sub CustomerLoginWindow
     (
         -text => 'Log In',
         -font => 'Roman 14 bold',
-        -command => sub
-                    {
-                        my $sth = $dbh -> prepare("select password
-                                                from Registration
-                                                where email = \'$newEmail\'");
-                        $sth->execute() or die $DBI::errstr;
+        -command =>
+            sub
+            {
+                my $sth = $dbh -> prepare("select password
+                                            from Registration
+                                            where email = \'$newEmail\'");
+                $sth->execute() or die $DBI::errstr;
 
-                        while (my @row = $sth -> fetchrow_array())
-                        {
-                            $actualPassword = $row[0];
-                        }
-                        $sth -> finish();
+                while (my @row = $sth -> fetchrow_array())
+                {
+                    $actualPassword = $row[0];
+                }
+                $sth -> finish();
 
-                        if($newPassword eq $actualPassword)
-                        {
-                            $UserWindow::user -> deiconify();
-                            $UserWindow::user -> raise();
-                        }
-                        else
-                        {
-                            $customer -> Label
-                            (
-                                -text => 'Invalid Email or Password',
-                                -foreground => 'white',
-                                -background => 'DarkSlateGray',
-                                -font => 'Georgia 12 normal',
-                            ) -> pack(-side => 'top', -pady => 2);
-                        }
-                    },
+                if($newPassword eq $actualPassword)
+                {
+                    $UserWindow::user -> deiconify();
+                    $UserWindow::user -> raise();
+                }
+                else
+                {
+                    $customer -> Label
+                    (
+                        -text => 'Invalid Email or Password',
+                        -foreground => 'white',
+                        -background => 'DarkSlateGray',
+                        -font => 'Georgia 12 normal',
+                    ) -> pack(-side => 'top', -pady => 2);
+                }
+            },
         -background => 'goldenrod2'
     ) -> pack(-side => 'top', -pady => 10);
 
