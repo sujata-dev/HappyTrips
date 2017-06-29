@@ -32,13 +32,14 @@ sub UserWindow
 
     $user -> Button
     (
-        -text => 'Book a Flight',
+        -text => 'Book a flight ticket',
         -font => 'Roman 14 bold',
-        -command => sub
-                    {
-                        $BookFlight::userBookFlight -> deiconify();
-                        $BookFlight::userBookFlight -> raise();
-                    },
+        -command =>
+            sub
+            {
+                $BookFlight::userBookFlight -> deiconify();
+                $BookFlight::userBookFlight -> raise();
+            },
         -background => 'goldenrod2'
     ) -> pack(-side => 'top', -pady => 10);
 
@@ -46,10 +47,11 @@ sub UserWindow
     (
         -text => 'Change a booking',
         -font => 'Roman 14 bold',
-        -command => sub
-                    {
+        -command =>
+            sub
+            {
 
-                    },
+            },
         -background => 'goldenrod2'
     ) -> pack(-side => 'top', -pady => 10);
 
@@ -57,10 +59,11 @@ sub UserWindow
     (
         -text => 'Terminate a booking',
         -font => 'Roman 14 bold',
-        -command => sub
-                    {
+        -command =>
+            sub
+            {
 
-                    },
+            },
         -background => 'goldenrod2'
     ) -> pack(-side => 'top', -pady => 10);
 
