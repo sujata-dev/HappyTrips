@@ -22,16 +22,21 @@ values('sujata', 'dev', 'female', 20, 'sujatadev97@gmail.com', 'cleverbot5',
 create table Airticket
 (
     eticketno       mediumint auto_increment not null,
+    airbusno        int,
+    flightname      varchar(255),
     travelclass     varchar(255),
+    date            date,
+    departuretime   varchar(255),
+    arrivaltime     varchar(255),
     adults          int,
     children        int,
     infants         int,
-    date            date,
     cityfrom        varchar(255),
     cityto          varchar(255),
+    fare            float,
 
     primary key(eticketno)
 );
 
 insert into Airticket
-values(1000001, 'economy', 1, 0, 0, '1997-4-17', 'Varanasi', 'Pune');
+values(1000001, 1001, 'SpiceJet', 'Economy', '2007-4-17', '20:15', '22:30', 1, 0, 0, 'Raipur', 'Pune', 2400);
