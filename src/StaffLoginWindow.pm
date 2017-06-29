@@ -73,33 +73,34 @@ sub StaffLoginWindow
     (
         -text => 'Log In',
         -font => 'Roman 14 bold',
-        -command => sub
-                    {
-                        my $sth = $dbh -> prepare("select password from Login
-                                            where username = \'$newUsername\'");
-                        $sth -> execute() or die $DBI::errstr;
+        -command =>
+            sub
+            {
+                my $sth = $dbh -> prepare("select password from Login
+                                        where username = \'$newUsername\'");
+                $sth -> execute() or die $DBI::errstr;
 
-                        while (my @row = $sth -> fetchrow_array())
-                        {
-                            $actualPassword = @row;
-                        }
-                        $sth -> finish();
+                while (my @row = $sth -> fetchrow_array())
+                {
+                    $actualPassword = @row;
+                }
+                $sth -> finish();
 
-                        if($newPassword eq $actualPassword)
-                        {
+                if($newPassword eq $actualPassword)
+                {
 
-                        }
-                        else
-                        {
-                            $staff -> Label
-                            (
-                                -text => 'Invalid Email or Password',
-                                -foreground => 'white',
-                                -background => 'DarkSlateGray',
-                                -font => 'Georgia 12 normal',
-                            ) -> pack(-side => 'top', -pady => 2);
-                        }
-                    },
+                }
+                else
+                {
+                    $staff -> Label
+                    (
+                        -text => 'Invalid Email or Password',
+                        -foreground => 'white',
+                        -background => 'DarkSlateGray',
+                        -font => 'Georgia 12 normal',
+                    ) -> pack(-side => 'top', -pady => 2);
+                }
+            },
         -background => 'goldenrod2',
     ) -> pack(-pady => 10);
 
