@@ -266,109 +266,166 @@ sub BookFlight
         -command =>
             sub
             {
-                # Flight list window
-                $flightlist = MainWindow -> new(-background => 'DarkSlateGray');
-                $flightlist -> title("List of Flights");
-                $flightlist -> Label
-                (
-                    -text => 'List of flights available (Select any one)',
-                    -foreground => 'white',
-                    -background => 'DarkSlateGray',
-                    -font => 'Georgia 15 bold',
-                ) -> pack(-side => 'top', -pady => 7);
+                if(($adults + $children + $infants) > 7)
+                {
+                    $userBookFlight -> Label
+                    (
+                        -text => 'You can only book for upto 7'.
+                                    ' guests per booking.',
+                        -foreground => 'white',
+                        -background => 'DarkSlateGray',
+                        -font => 'Georgia 12 bold',
+                    ) -> pack(-side => 'top', -pady => 2);
+                }
+                else
+                {
+                    # Flight list window
+                    $flightlist = MainWindow -> new(-background => 'DarkSlateGray');
+                    $flightlist -> title("List of Flights");
+                    $flightlist -> Label
+                    (
+                        -text => 'List of flights available (Select any one)',
+                        -foreground => 'white',
+                        -background => 'DarkSlateGray',
+                        -font => 'Georgia 15 bold',
+                    ) -> pack(-side => 'top', -pady => 7);
 
-                my $sth = $dbh -> prepare("select \* from AirbusRecord
+                    my $sth = $dbh -> prepare("select \* from AirbusRecord
                                             where departure = \'$cityfrom\'
                                             and arrival = \'$cityto\' and
                                             journeydate = \'$journeyDate\';");
-                $sth -> execute() or die $DBI::errstr;
+                    $sth -> execute() or die $DBI::errstr;
 
-                $i = 0;
-                while(my @row = $sth -> fetchrow_array())
-                {
-                    my ($airbusno, $flightname, $journeyDate, $cityfrom,
+                    $i = 0;
+                    while(my @row = $sth -> fetchrow_array())
+                    {
+                        my ($airbusno, $flightname, $journeyDate, $cityfrom,
                         $departuretime, $cityto, $arrivaltime, $businessfare,
                         $economicalfare) = @row;
 
-                    $fare = ($TravelClass eq "Economy") ? $economicalfare :
-                                                                $businessfare;
-                    $flightinfo[$i] = $airbusno." ".$flightname." ".$journeyDate.
-                                " ".$cityfrom." ".$departuretime." ".$cityto.
-                                " ".$arrivaltime." ".$fare." ";
-                    $i++;
-                }
-                $sth -> finish;
+                        $fare = ($TravelClass eq "Economy") ?
+                                            $economicalfare : $businessfare;
 
-                $flightlist -> Label
-                (
-                    -text => 'AirbusNo FlightName Date Departure Arrival'.
-                                'Price(INR)',
-                    -foreground => 'white',
-                    -background => 'DarkSlateGray',
-                    -font => 'Georgia 12 normal',
-                ) -> pack(-side => 'top', -pady => 7);
+                        $flightinfo[$i] = $airbusno."  ".$flightname."  ".
+                                $journeyDate."  ".$cityfrom."  ".$departuretime
+                                ."  ".$cityto."  ".$arrivaltime."  ".$fare."  ";
+                        $i++;
+                    }
+                    $sth -> finish;
 
-                $flightlist -> Optionmenu
-                (
-                    -options => \@flightinfo,
-                    -font => 'Georgia 12 normal',
-                    -textvariable => \$row
-                ) -> pack(-side => 'top', -pady => 2);
+                    $flightlist -> Label
+                    (
+                        -text => 'AirbusNo FlightName Date Departure Arrival'.
+                                    'Price(INR)',
+                        -foreground => 'white',
+                        -background => 'DarkSlateGray',
+                        -font => 'Georgia 12 normal',
+                    ) -> pack(-side => 'top', -pady => 7);
 
-                ($airbusno, $flightname, $journeyDate, $cityfrom,
-                    $departuretime, $cityto, $arrivaltime, $fare)
-                    = split(' ',$row);
+                    $flightlist -> Optionmenu
+                    (
+                        -options => \@flightinfo,
+                        -font => 'Georgia 12 normal',
+                        -textvariable => \$row
+                    ) -> pack(-side => 'top', -pady => 2);
 
-                $price = ($fare * $adults) + (($fare / 2) * $children);
+                    ($airbusno, $flightname, $journeyDate, $cityfrom,
+                        $departuretime, $cityto, $arrivaltime, $fare)
+                            = split('  ',$row);
 
-                $flightlist -> Button
-                (
-                    -text => 'Book ticket',
-                    -font => 'Roman 12 bold',
-                    -command =>
-                        sub
-                        {
-                            my $database = "CustomerRecord";
-                            my $dsn = "DBI:mysql:CustomerRecord";
-                            my $dbh = DBI -> connect($dsn, $userid, $pwd )
-                                or die $DBI::errstr;
+                    $price = ($fare * $adults) + (($fare / 2) * $children);
 
-                            $sth = $dbh -> prepare("insert into Airticket
+                    $flightlist -> Button
+                    (
+                        -text => 'Book ticket',
+                        -font => 'Roman 12 bold',
+                        -command =>
+                            sub
+                            {
+                                my $database = "CustomerRecord";
+                                my $dsn = "DBI:mysql:CustomerRecord";
+                                my $dbh = DBI -> connect($dsn, $userid, $pwd )
+                                    or die $DBI::errstr;
+
+                                $sth = $dbh -> prepare("insert into Airticket
                                     (airbusno, flightname, travelclass, date,
                                     departuretime, arrivaltime, adults,
                                     children, infants, cityfrom, cityto, fare)
                                     values
                                     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
-                            $sth -> execute($airbusno, $flightname,
-                                $TravelClass, $journeyDate, $departuretime,
-                                $arrivaltime, $adults, $children, $infants,
-                                $cityfrom, $cityto, $price) or die;
-                            $sth -> finish();
+                                $sth -> execute($airbusno, $flightname,
+                                    $TravelClass, $journeyDate, $departuretime,
+                                    $arrivaltime, $adults, $children, $infants,
+                                    $cityfrom, $cityto, $price) or die;
+                                $sth -> finish();
 
-                            $flightlist -> Label
-                            (
-                                -text => 'Price = '.$price,
-                                -foreground => 'white',
-                                -background => 'DarkSlateGray',
-                                -font => 'Georgia 15 normal',
-                            ) -> pack(-side => 'top', -pady => 7);
+                                $flightlist -> Label
+                                (
+                                    -text => 'Price = '.$price,
+                                    -foreground => 'white',
+                                    -background => 'DarkSlateGray',
+                                    -font => 'Georgia 15 normal',
+                                ) -> pack(-side => 'top', -pady => 7);
 
-                            $flightlist -> Button
-                            (
-                                -text => 'Proceed for Payment',
-                                -font => 'Roman 12 bold',
-                                -command =>
-                                    sub
-                                    {
-                                        #$TicketPaymentWindow::pay -> deiconify();
-                                        #$TicketPaymentWindow::pay -> raise();
-                                    }
-                                -background => 'goldenrod2'
-                            ) -> pack(-side => 'top', -pady => 7);
-                        },
-                    -background => 'goldenrod2'
-                ) -> pack(-side => 'top', -pady => 10);
+
+                                $flightlist -> Label
+                                (
+                                    -text => 'Check your mail for flight ticket',
+                                    -foreground => 'white',
+                                    -background => 'DarkSlateGray',
+                                    -font => 'Georgia 15 normal',
+                                ) -> pack(-side => 'top', -pady => 7);
+
+                                $flightlist -> Label
+                                (
+                                    -text => 'Please note the following:',
+                                    -foreground => 'white',
+                                    -background => 'DarkSlateGray',
+                                    -font => 'Georgia 11 normal',
+                                ) -> pack(-side => 'top', -pady => 7);
+
+                                $flightlist -> Label
+                                (
+                                    -text => '1)  Please check your ticket'.
+                                    ' after it is issued, for its correctness.',
+                                    -foreground => 'white',
+                                    -background => 'DarkSlateGray',
+                                    -font => 'Georgia 11 normal',
+                                ) -> pack(-side => 'top', -pady => 1);
+
+                                $flightlist -> Label
+                                (
+                                    -text => '2)  A change to flight ticket is'.
+                                    ' not permitted. You would need to cancel'.
+                                    ' your ticket and book a new ticket.',
+                                    -foreground => 'white',
+                                    -background => 'DarkSlateGray',
+                                    -font => 'Georgia 11 normal',
+                                ) -> pack(-side => 'top', -pady => 1);
+
+                                $flightlist -> Label
+                                (
+                                    -text => '3)  There is a 25% cancellation'.
+                                    ' charge on each fare.',
+                                    -foreground => 'white',
+                                    -background => 'DarkSlateGray',
+                                    -font => 'Georgia 11 normal',
+                                ) -> pack(-side => 'top', -pady => 1);
+
+                                $flightlist -> Label
+                                (
+                                    -text => '4)  On cancellation, we will'.
+                                    ' refund the value of tickets purchased by'.
+                                    ' you from our offices directly to you.',
+                                    -foreground => 'white',
+                                    -background => 'DarkSlateGray',
+                                    -font => 'Georgia 11 normal',
+                                ) -> pack(-side => 'top', -pady => 1);
+                            },
+                        -background => 'goldenrod2'
+                    ) -> pack(-side => 'top', -pady => 10);
+                }
             },
         -background => 'DeepSkyBlue'
     ) -> pack(-side => 'bottom', -pady => 2);
