@@ -15,14 +15,14 @@ my $pwd = "root";
 my $dbh = DBI -> connect($dsn, $userid, $pwd ) or die $DBI::errstr;
 
 my ($newUsername, $newPassword, $actualPassword);
-our $staff;
+our $stafflogin;
 
 
 sub StaffLoginWindow
 {
-    $staff = MainWindow -> new(-background => 'DarkSlateGray',);
-    $staff -> title("Staff Login");
-    $staff -> Label
+    $stafflogin = MainWindow -> new(-background => 'DarkSlateGray',);
+    $stafflogin -> title("Staff Login");
+    $stafflogin -> Label
     (
         -text => 'For Staff Only',
         -foreground => 'white',
@@ -30,7 +30,7 @@ sub StaffLoginWindow
         -font => 'Georgia 17 bold',
     ) -> pack(-side => 'top', -pady => 10);
 
-    $staff -> Label
+    $stafflogin -> Label
     (
         -text => 'Login To Continue',
         -foreground => 'white',
@@ -38,7 +38,7 @@ sub StaffLoginWindow
         -font => 'Georgia 17 bold',
     ) -> pack(-side => 'top', -pady => 10);
 
-    $staff -> Label
+    $stafflogin -> Label
     (
         -text => 'Username',
         -foreground => 'white',
@@ -46,14 +46,14 @@ sub StaffLoginWindow
         -font => 'Georgia 13 normal',
     ) -> pack(-side => 'top', -pady => 2);
 
-    $staff -> Entry
+    $stafflogin -> Entry
     (
         -textvariable => \$newUsername,
         -background => 'SlateGray',
         -font => 'Georgia 10 bold',
     ) -> pack(-side => 'top', -pady => 2);
 
-    $staff -> Label
+    $stafflogin -> Label
     (
         -text => 'Password',
         -foreground => 'white',
@@ -61,7 +61,7 @@ sub StaffLoginWindow
         -font => 'Georgia 13 normal',
     ) -> pack(-side => 'top', -pady => 2);
 
-    $staff -> Entry
+    $stafflogin -> Entry
     (
         -textvariable => \$newPassword,
         -background => 'SlateGray',
@@ -69,7 +69,7 @@ sub StaffLoginWindow
         -show => "*",
     ) -> pack(-side => 'top', -pady => 2);
 
-    $staff -> Button
+    $stafflogin -> Button
     (
         -text => 'Log In',
         -font => 'Roman 14 bold',
@@ -80,19 +80,21 @@ sub StaffLoginWindow
                                         where username = \'$newUsername\'");
                 $sth -> execute() or die $DBI::errstr;
 
-                while (my @row = $sth -> fetchrow_array())
+                while (my $row = $sth -> fetchrow_array())
                 {
-                    $actualPassword = @row;
+                    $actualPassword = $row;
                 }
                 $sth -> finish();
 
                 if($newPassword eq $actualPassword)
                 {
-
+                    $StaffWindow::staff -> deiconify();
+                    $StaffWindow::staff -> raise();
+                    $StaffWindow::staff -> update();
                 }
                 else
                 {
-                    $staff -> Label
+                    $stafflogin -> Label
                     (
                         -text => 'Invalid Email or Password',
                         -foreground => 'white',
@@ -104,6 +106,6 @@ sub StaffLoginWindow
         -background => 'goldenrod2',
     ) -> pack(-pady => 10);
 
-    $staff -> withdraw(); # hide the Staff Login Window
+    $stafflogin -> withdraw(); # hide the Staff Login Window
 }
 1;
