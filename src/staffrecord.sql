@@ -4,12 +4,13 @@ use staffrecord;
 
 create table Login
 (
+    staffID         varchar(255),
     fullname        varchar(255),
     username        varchar(255),
     password        varchar(255),
 
-    primary key(username)
+    primary key(staffID)
 );
 
 insert into Login
-values('Riya Sharma', 'riya23', 'rs23');
+values('R17003', 'Riya Sharma', 'riya23', 'rs23');
