@@ -216,11 +216,11 @@ sub SignUpWindow
                 }
             },
         -background => 'goldenrod2'
-    ) -> pack(-side => 'left', -padx => 5, -pady => 10);
+    ) -> pack(-side => 'left', -padx => 25, -pady => 15);
 
     $main -> Button
     (
-        -text => 'I already have an account',
+        -text => 'Log In',
         -font => 'Roman 14 bold',
         -command =>
             sub
@@ -230,7 +230,7 @@ sub SignUpWindow
                 $CustomerLoginWindow::customer -> update();
             },
         -background => 'DeepSkyBlue'
-    ) -> pack(-side => 'left', -padx => 5, -pady => 10);
+    ) -> pack(-side => 'left', -padx => 25, -pady => 15);
 
     $main -> Button
     (
@@ -239,12 +239,12 @@ sub SignUpWindow
         -command =>
             sub
             {
-                $StaffLoginWindow::staff -> deiconify();
-                $StaffLoginWindow::staff -> raise();
-                $StaffLoginWindow::staff -> update();
+                $StaffLoginWindow::stafflogin -> deiconify();
+                $StaffLoginWindow::stafflogin -> raise();
+                $StaffLoginWindow::stafflogin -> update();
             },
         -background => 'goldenrod2'
-    ) -> pack(-side => 'left', -pady => 10);
+    ) -> pack(-side => 'left', -padx => 25, -pady => 15);
 
     MainLoop();
 }
